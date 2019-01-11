@@ -26,15 +26,24 @@ Demonstrate your understanding of this Sprint's concepts by answering the follow
 
 - [ ] Mention two parts of Express that you learned about this week.
 
-
+1. Server side routing. 
+2. The structure of promises in a server.
 
 - [ ] Describe Middleware?
 
+I am pretty sure that everything is middleware. But it is a set of fucntions that that are either created or imported which a server runs between recieving API requests and querrying a database. 
+
 - [ ] Describe a Resource?
+
+a library which is added to the packages.json file that is use by server to function
 
 - [ ] What can the API return to help clients know if a request was successful?
 
+Anything. Data from the database, succes messages, passive-agressive remarks. 
+
 - [ ] How can we partition our application into sub-applications?
+
+By using require() and propery routing and file structures for server partts, middleware, or otherwise. 
 
 ## Project Setup
 
