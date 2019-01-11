@@ -71,4 +71,164 @@ server.get('/api/projects/:projectid', (req, res) => {
 		);
 });
 
+//create a new project
+server.post('/api/projects', (req, res) => {
+	const projectInfo = req.body;
+
+	//check the name of the project
+	if (!projectInfo.name || projectInfo.name.length > 128) {
+		res.status(400).json({
+			errorMessage:
+				'Please provide a valid name for the project (<128 chars).'
+		});
+	}
+
+	//check to see if the object has a description
+	else if (!projectInfo.description) {
+		res.status(400).json({
+			errorMessage: 'Please provide a valid description for the project.'
+		});
+	}
+
+	//check to see that the rest of the object is formatted correctly
+	else if (Object.keys(projectInfo).length != 2) {
+		res.status(400).json({
+			errorMessage:
+				"Please provide a valid object for the project: { name : 'Bob Dole', description: 'I am running for president' }"
+		});
+	}
+
+	//check to see if that name is taken already
+	else {
+		projectDb
+			.get()
+			.then(projects => {
+				if (
+					projects
+						.map(project => project.name)
+						.includes(projectInfo.name)
+				) {
+					res.status(400).json({
+						errorMessage:
+							'Please provide a unique name for the project.'
+					});
+				} else {
+					//actually add the new project
+					projectDb
+						.insert(projectInfo)
+						.then(result => {
+							res.status(201).json(result);
+						})
+						.catch(err =>
+							res.status(500).json({
+								message: 'Adding the project failed'
+							})
+						);
+				}
+			})
+			.catch(err => res.status(500).json(err));
+	}
+});
+
+//create a new action
+server.post('/api/actions', (req, res) => {
+	const actionInfo = req.body;
+
+	//check the description of the action
+	if (!actionInfo.description || actionInfo.description.length > 128) {
+		res.status(400).json({
+			errorMessage:
+				'Please provide a valid description for the action (<128 chars).'
+		});
+	}
+
+	//check to see if the object has a notes
+	else if (!actionInfo.notes) {
+		res.status(400).json({
+			errorMessage: 'Please provide valid notes for the action.'
+		});
+	}
+
+	//check to see if the object has a project_id
+	else if (!actionInfo.project_id) {
+		res.status(400).json({
+			errorMessage: 'Please provide valid project_id for the action.'
+		});
+	}
+
+	//check to see that the rest of the object is formatted correctly
+	else if (Object.keys(actionInfo).length != 3) {
+		res.status(400).json({
+			errorMessage:
+				"Please provide a valid object for the action: { project_id : 1, description: 'Win', notes : 'Win everything' }"
+		});
+	}
+
+	//check to see if the action description is taken already for this task
+	else {
+		actionDb
+			.get()
+			.then(actions => {
+				if (
+					actions
+						.filter(
+							action =>
+								action.project_id === actionInfo.project_id
+						)
+						.map(action => action.description)
+						.includes(actionInfo.description)
+				) {
+					res.status(400).json({
+						errorMessage:
+							'Please provide a unique description for the action.'
+					});
+				} else {
+					//check to see if it is a valid project_id
+					projectDb
+						.get()
+						.then(projects => {
+                            console.log(projects)
+							if (
+								projects
+									.map(project => project.id)
+									.includes(actionInfo.project_id)
+							) {
+								//actually add the new action
+								actionDb
+									.insert(actionInfo)
+									.then(result => {
+										res.status(201).json(result);
+									})
+									.catch(err =>
+										res.status(500).json({
+											message: 'Adding the action failed'
+										})
+									);
+							} else {
+								res.status(400).json({
+									errorMessage:
+										'Please provide a valid project_id for the action.'
+								});
+							}
+						})
+						.catch();
+				}
+			})
+			.catch(err => res.status(500).json(err));
+	}
+});
+
+//catch all
+server.get('/:id', (req, res) => {
+	const message = req.params.id;
+
+	res.send(`There is no API endpoint at ${message}`);
+});
+
+server.get('/api/:id', (req, res) => {
+	const message = req.params.id;
+
+	res.send(`There is no API endpoint at ${message}`);
+});
+
 module.exports = server;
