@@ -16,5 +16,28 @@ server.get('/', (req, res) => {
 	res.send(`sanity check success`);
 });
 
+//get all actions
+server.get('/api/actions', (req, res) => {
+	actionDb
+		.get()
+		.then(actions => {
+			res.status(200).json(actions);
+		})
+		.catch(err => {
+			res.json(err);
+		});
+});
+
+//get all projects
+server.get('/api/projects', (req, res) => {
+	projectDb
+		.get()
+		.then(projects => {
+			res.status(200).json(projects);
+		})
+		.catch(err => {
+			res.json(err);
+		});
+});
 
 module.exports = server;
