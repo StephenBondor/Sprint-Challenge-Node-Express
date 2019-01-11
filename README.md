@@ -35,7 +35,7 @@ I am pretty sure that everything is middleware. But it is a set of fucntions tha
 
 - [ ] Describe a Resource?
 
-a library which is added to the packages.json file that is use by server to function
+Accordin to this readme it's data/functions in a database
 
 - [ ] What can the API return to help clients know if a request was successful?
 
