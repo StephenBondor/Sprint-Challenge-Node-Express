@@ -40,4 +40,35 @@ server.get('/api/projects', (req, res) => {
 		});
 });
 
+//get specific action
+server.get('/api/actions/:actionid', (req, res) => {
+	const id = req.params.actionid;
+
+	actionDb
+		.get(id)
+		.then(action => {
+			res.status(200).json(action);
+		})
+		.catch(err =>
+			res.status(500).json({
+				message: 'Action not found, enter a valid ID'
+			})
+		);
+});
+
+//get specific project
+server.get('/api/projects/:projectid', (req, res) => {
+	const id = req.params.projectid;
+	projectDb
+		.get(id)
+		.then(project => {
+			res.status(200).json(project);
+		})
+		.catch(err =>
+			res.status(404).json({
+				message: 'Post not found, enter a valid ID'
+			})
+		);
+});
+
 module.exports = server;
