@@ -187,7 +187,6 @@ server.post('/api/actions', (req, res) => {
 					projectDb
 						.get()
 						.then(projects => {
-							console.log(projects);
 							if (
 								projects
 									.map(project => project.id)
@@ -211,7 +210,7 @@ server.post('/api/actions', (req, res) => {
 								});
 							}
 						})
-						.catch();
+						.catch(err => res.status(500).json(err));
 				}
 			})
 			.catch(err => res.status(500).json(err));
@@ -251,6 +250,180 @@ server.delete('/api/actions/:id', (req, res) => {
 		})
 		.catch(err => res.status(500).json(err));
 });
+
+//Update a project
+server.put('/api/projects/:projectid', (req, res) => {
+	const projectInfo = req.body;
+	const id = req.params.projectid;
+
+	//check the name of the project
+	if (!projectInfo.name || projectInfo.name.length > 128) {
+		res.status(400).json({
+			errorMessage:
+				'Please provide a valid name for the project you are updating (<128 chars).'
+		});
+	}
+
+	//check to see if the object has a description
+	else if (!projectInfo.description) {
+		res.status(400).json({
+			errorMessage: 'Please provide a valid description for the project.'
+		});
+	}
+
+	//check to see if the object has a completed key
+	else if (!Object.keys(projectInfo).includes('completed')) {
+		res.status(400).json({
+			errorMessage:
+				'Please provide a valid completed key for the project object.'
+		});
+	}
+
+	//check to see that the rest of the object is formatted correctly
+	else if (Object.keys(projectInfo).length != 3) {
+		res.status(400).json({
+			errorMessage:
+				"Please provide a valid object for the project: { name : 'Bob Dole', description: 'I am running for president', completed: true }"
+		});
+	}
+
+	//check to see if that name is taken already
+	else {
+		projectDb
+			.get()
+			.then(projects => {
+				if (
+					projects
+						.filter(project => project.id != id)
+						.map(project => project.name)
+						.includes(projectInfo.name)
+				) {
+					res.status(400).json({
+						errorMessage:
+							'Please provide a unique name for the project.'
+					});
+				} else {
+					//actually update the project
+					projectDb
+						.update(id, projectInfo)
+						.then(result => {
+							if (result) {
+								res.status(201).json(result);
+							} else {
+								res.status(400).json({
+									message: 'Please provide a valid project ID'
+								});
+							}
+						})
+						.catch(err => res.status(500).json(err));
+				}
+			})
+			.catch(err => res.status(500).json(err));
+	}
+});
+
+//Update an action
+server.put('/api/actions/:actionid', (req, res) => {
+	const actionInfo = req.body;
+	const id = req.params.actionid;
+
+	//check the description of the action
+	if (!actionInfo.description || actionInfo.description.length > 128) {
+		res.status(400).json({
+			errorMessage:
+				'Please provide a valid description for the action (<128 chars).'
+		});
+	}
+
+	//check to see if the object has a notes
+	else if (!actionInfo.notes) {
+		res.status(400).json({
+			errorMessage: 'Please provide valid notes for the action.'
+		});
+	}
+
+	//check to see if the object has a project_id
+	else if (!actionInfo.project_id) {
+		res.status(400).json({
+			errorMessage: 'Please provide valid project_id for the action.'
+		});
+	}
+
+	//check to see if the object has a completed key
+	else if (!Object.keys(actionInfo).includes('completed')) {
+		res.status(400).json({
+			errorMessage:
+				'Please provide a valid completed key for the action object.'
+		});
+	}
+
+	//check to see that the rest of the object is formatted correctly
+	else if (Object.keys(actionInfo).length != 4) {
+		res.status(400).json({
+			errorMessage:
+				"Please provide a valid object for the action: { project_id : 1, description: 'Win', notes : 'Win everything', completed : true }"
+		});
+	}
+
+	//check to see if the action description is taken already for this task
+	else {
+		actionDb
+			.get()
+			.then(actions => {
+				if (
+					actions
+						.filter(
+							action =>
+								action.project_id === actionInfo.project_id &&
+								action.id != id
+						)
+						.map(action => action.description)
+						.includes(actionInfo.description)
+				) {
+					res.status(400).json({
+						errorMessage:
+							'Please provide a unique description for the action.'
+					});
+				} else {
+					//check to see if it is a valid project_id
+					projectDb
+						.get()
+						.then(projects => {
+							console.log(projects);
+							if (
+								projects
+									.map(project => project.id)
+									.includes(actionInfo.project_id)
+							) {
+								//actually update the new action
+								actionDb
+									.update(id, actionInfo)
+									.then(result => {
+                                        if (result) {
+                                            res.status(201).json(result);
+                                        } else {
+                                            res.status(400).json({
+                                                message: 'Please provide a valid action ID'
+                                            });
+                                        }
+                                    })
+                                    .catch(err => res.status(500).json(err));
+							} else {
+								res.status(400).json({
+									errorMessage:
+										'Please provide a valid project_id for the action.'
+								});
+							}
+						})
+						.catch(err => res.status(500).json(err));
+				}
+			})
+			.catch(err => res.status(500).json(err));
+	}
+});
+
+//get all actions for a project
+
 
 //catch all
 server.get('/:id', (req, res) => {
