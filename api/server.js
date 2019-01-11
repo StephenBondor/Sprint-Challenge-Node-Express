@@ -66,7 +66,7 @@ server.get('/api/projects/:projectid', (req, res) => {
 		})
 		.catch(err =>
 			res.status(404).json({
-				message: 'Post not found, enter a valid ID'
+				message: 'Project not found, enter a valid ID'
 			})
 		);
 });
@@ -399,15 +399,16 @@ server.put('/api/actions/:actionid', (req, res) => {
 								actionDb
 									.update(id, actionInfo)
 									.then(result => {
-                                        if (result) {
-                                            res.status(201).json(result);
-                                        } else {
-                                            res.status(400).json({
-                                                message: 'Please provide a valid action ID'
-                                            });
-                                        }
-                                    })
-                                    .catch(err => res.status(500).json(err));
+										if (result) {
+											res.status(201).json(result);
+										} else {
+											res.status(400).json({
+												message:
+													'Please provide a valid action ID'
+											});
+										}
+									})
+									.catch(err => res.status(500).json(err));
 							} else {
 								res.status(400).json({
 									errorMessage:
@@ -423,7 +424,21 @@ server.put('/api/actions/:actionid', (req, res) => {
 });
 
 //get all actions for a project
-
+server.get('/api/projects/:projectid/actions', (req, res) => {
+	const id = req.params.projectid;
+	projectDb
+		.getProjectActions(id)
+		.then(actions => {
+			if (actions.length != 0) {
+				res.status(200).json(actions);
+			} else {
+				res.status(404).json({
+					message: 'Either the Project has no actions or there was an invalid ID'
+				});
+			}
+		})
+		.catch(err => res.status(500).json(err));
+});
 
 //catch all
 server.get('/:id', (req, res) => {
