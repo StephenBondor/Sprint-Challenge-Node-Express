@@ -187,7 +187,7 @@ server.post('/api/actions', (req, res) => {
 					projectDb
 						.get()
 						.then(projects => {
-                            console.log(projects)
+							console.log(projects);
 							if (
 								projects
 									.map(project => project.id)
@@ -218,17 +218,49 @@ server.post('/api/actions', (req, res) => {
 	}
 });
 
+//delete a project by ID
+server.delete('/api/projects/:id', (req, res) => {
+	const id = req.params.id;
+	projectDb
+		.remove(id)
+		.then(count => {
+			if (count) {
+				res.status(200).json(count);
+			} else {
+				res.status(404).json({
+					message: 'The project with the specified ID does not exist'
+				});
+			}
+		})
+		.catch(err => res.status(500).json(err));
+});
+
+//delete an action by ID
+server.delete('/api/actions/:id', (req, res) => {
+	const id = req.params.id;
+	actionDb
+		.remove(id)
+		.then(count => {
+			if (count) {
+				res.status(200).json(count);
+			} else {
+				res.status(404).json({
+					message: 'The action with the specified ID does not exist'
+				});
+			}
+		})
+		.catch(err => res.status(500).json(err));
+});
+
 //catch all
 server.get('/:id', (req, res) => {
 	const message = req.params.id;
-
 	res.send(`There is no API endpoint at ${message}`);
 });
 
 server.get('/api/:id', (req, res) => {
 	const message = req.params.id;
-
-	res.send(`There is no API endpoint at ${message}`);
+	res.send(`There is no API endpoint at api/${message}`);
 });
 
 module.exports = server;
