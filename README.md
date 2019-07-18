@@ -26,13 +26,24 @@ Demonstrate your understanding of this Sprint's concepts by answering the follow
 
 - [ ] Mention two parts of Express that you learned about this week.
 
+1. Server side routing. 
+2. The structure of promises in a server.
+
 - [ ] Describe Middleware?
+
+I am pretty sure that everything is middleware. But it is a set of fucntions that that are either created or imported which a server runs between recieving API requests and querrying a database. 
 
 - [ ] Describe a Resource?
 
+Accordin to this readme it's data/functions in a database
+
 - [ ] What can the API return to help clients know if a request was successful?
 
+Anything. Data from the database, succes messages, passive-agressive remarks. 
+
 - [ ] How can we partition our application into sub-applications?
+
+By using require() and propery routing and file structures for server partts, middleware, or otherwise. 
 
 ## Project Setup
 
@@ -69,14 +80,14 @@ The `projectModel.js` helper includes an extra method called `getProjectActions(
 
 ## Minimum Viable Product
 
-- [ ] Take the steps necessary to create a `package.json` to keep a record of all dependencies.
-- [ ] Use _yarn_ to add **knex** and **sqlite3** as dependencies to the project. **This is required for database access**.
-- [ ] Configure an _npm script_ named _"start"_ that will execute your code using _nodemon_ so that the **server restarts on changes**. Make _nodemon_ be a development time dependency only, it shouldn't be deployed to production.
+- [ * ] Take the steps necessary to create a `package.json` to keep a record of all dependencies.
+- [ * ] Use _yarn_ to add **knex** and **sqlite3** as dependencies to the project. **This is required for database access**.
+- [ * ] Configure an _npm script_ named _"start"_ that will execute your code using _nodemon_ so that the **server restarts on changes**. Make _nodemon_ be a development time dependency only, it shouldn't be deployed to production.
 
 Design and build the necessary endpoints to:
 
-- [ ] Perform CRUD operations on _projects_ and _actions_.
-- [ ] Retrieve the list of actions for a project.
+- [ * ] Perform CRUD operations on _projects_ and _actions_.
+- [ * ] Retrieve the list of actions for a project.
 
 ## Database Schemas
 
